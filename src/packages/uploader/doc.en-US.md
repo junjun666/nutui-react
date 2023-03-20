@@ -124,30 +124,6 @@ export default App;
 ```
 :::
 
-### Customize the upload style
-
-:::demo
-``` tsx
-import React, { useState } from "react";
-import { Uploader, Button } from '@nutui/nutui-react';
-
-const App = () => {
-  const uploadUrl = 'https://my-json-server.typicode.com/linrufeng/demo/posts'
-  return (
-    <>
-      <h2>Customize the upload style</h2>
-      <Uploader url={uploadUrl}>
-        <Button type="success" size="small">
-          Upload the file
-        </Button>
-      </Uploader>
-    </>
-  )
-}
-export default App;
-```
-:::
-
 ### Custom upload uses default progress bar
 
 :::demo

@@ -13,6 +13,7 @@ export interface SwitchProps extends BasicComponent {
   activeText: string
   inactiveText: string
   className: string
+  id: string
   style: React.CSSProperties
   onChange: (val: boolean, event: React.MouseEvent) => void
 }
@@ -26,6 +27,7 @@ const defaultProps = {
   activeText: '',
   inactiveText: '',
   className: '',
+  id: '',
 } as SwitchProps
 export const Switch: FunctionComponent<Partial<SwitchProps>> = (props) => {
   const {
@@ -39,6 +41,7 @@ export const Switch: FunctionComponent<Partial<SwitchProps>> = (props) => {
     onChange,
     className,
     style,
+    ...rest
   } = {
     ...defaultProps,
     ...props,
@@ -74,7 +77,12 @@ export const Switch: FunctionComponent<Partial<SwitchProps>> = (props) => {
     onChange && onChange(!value, event)
   }
   return (
-    <div className={classes()} onClick={(e) => onClick(e)} style={styles()}>
+    <div
+      className={classes()}
+      onClick={(e) => onClick(e)}
+      style={styles()}
+      {...rest}
+    >
       <div className="switch-button">
         {!value && <div className="close-line" />}
         {activeText && (

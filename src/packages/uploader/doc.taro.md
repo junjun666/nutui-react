@@ -121,28 +121,6 @@ const App = () => {
 export default App;
 ```
 
-### 自定义上传样式
-
-``` tsx
-import React, { useState } from "react";
-import { Uploader } from '@nutui/nutui-react-taro';
-
-const App = () => {
-  const uploadUrl = 'https://my-json-server.typicode.com/linrufeng/demo/posts'
-  return (
-    <>
-      <h2>自定义上传样式</h2>
-      <Uploader url={uploadUrl}>
-        <Button type="success" size="small">
-          上传文件
-        </Button>
-      </Uploader>
-    </>
-  )
-}
-export default App;
-```
-
 ### 自定义上传使用默认进度条
 
 ``` tsx

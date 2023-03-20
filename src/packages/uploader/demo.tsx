@@ -26,7 +26,6 @@ interface T {
   uploadListShow: string
   uploadDefaultProgress: string
   a4afedb5: string
-  '37c65f47': string
   bb5caa9c: string
   '27f1376e': string
   '0e5eaea3': string
@@ -56,7 +55,6 @@ const UploaderDemo = () => {
       uploadListShow: '基础用法-上传列表展示',
       uploadDefaultProgress: '自定义上传使用默认进度条',
       a4afedb5: '上传状态',
-      '37c65f47': '自定义上传样式',
       bb5caa9c: '上传文件',
       '27f1376e': '直接调起摄像头（移动端生效）',
       '0e5eaea3': '限制上传数量5个',
@@ -84,7 +82,6 @@ const UploaderDemo = () => {
       uploadListShow: '基礎用法-上傳列表展示',
       uploadDefaultProgress: '自定義上傳使用默認進度條',
       a4afedb5: '上傳狀態',
-      '37c65f47': '自定義上傳樣式',
       bb5caa9c: '上傳檔',
       '27f1376e': '直接調起攝像頭（移動端生效）',
       '0e5eaea3': '限制上傳數量5個',
@@ -112,7 +109,6 @@ const UploaderDemo = () => {
       uploadListShow: 'Basic usage - upload list display',
       uploadDefaultProgress: 'Custom upload uses default progress bar',
       a4afedb5: 'Upload status',
-      '37c65f47': 'Customize the upload style',
       bb5caa9c: 'Upload the file',
       '27f1376e': 'Direct camera up (mobile)',
       '0e5eaea3': 'Limit the number of uploads to 5',
@@ -285,13 +281,6 @@ const UploaderDemo = () => {
           multiple
           listType="list"
         >
-          <Button type="success" size="small">
-            {translated.bb5caa9c}
-          </Button>
-        </Uploader>
-
-        <h2>{translated['37c65f47']}</h2>
-        <Uploader url={uploadUrl}>
           <Button type="success" size="small">
             {translated.bb5caa9c}
           </Button>

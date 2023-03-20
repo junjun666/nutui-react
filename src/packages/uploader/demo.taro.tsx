@@ -54,7 +54,6 @@ interface T {
   uploadListShow: string
   uploadDefaultProgress: string
   a4afedb5: string
-  '37c65f47': string
   bb5caa9c: string
   '27f1376e': string
   videoUploader: string
@@ -85,7 +84,6 @@ const UploaderDemo = () => {
       uploadListShow: '基础用法-上传列表展示',
       uploadDefaultProgress: '自定义上传使用默认进度条',
       a4afedb5: '上传状态',
-      '37c65f47': '自定义上传样式',
       bb5caa9c: '上传文件',
       '27f1376e': '直接调起摄像头（移动端生效）',
       videoUploader: '使用前摄像头拍摄3s视频并上传(仅支持微信小程序)',
@@ -114,7 +112,6 @@ const UploaderDemo = () => {
       uploadListShow: '基礎用法-上傳列表展示',
       uploadDefaultProgress: '自定義上傳使用默認進度條',
       a4afedb5: '上傳狀態',
-      '37c65f47': '自定義上傳樣式',
       bb5caa9c: '上傳檔',
       '27f1376e': '直接調起攝像頭（移動端生效）',
       videoUploader: '使用前監視器拍攝3s視頻並上傳（僅支持微信小程式）',
@@ -143,7 +140,6 @@ const UploaderDemo = () => {
       uploadListShow: 'Basic usage - upload list display',
       uploadDefaultProgress: 'Custom upload uses default progress bar',
       a4afedb5: 'Upload status',
-      '37c65f47': 'Customize the upload style',
       bb5caa9c: 'Upload the file',
       '27f1376e': 'Direct camera up (mobile)',
       videoUploader:
@@ -309,13 +305,6 @@ const UploaderDemo = () => {
           multiple
           listType="list"
         >
-          <Button type="success" size="small">
-            {translated.bb5caa9c}
-          </Button>
-        </Uploader>
-
-        <h2>{translated['37c65f47']}</h2>
-        <Uploader url={uploadUrl}>
           <Button type="success" size="small">
             {translated.bb5caa9c}
           </Button>

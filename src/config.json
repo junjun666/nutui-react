@@ -1011,6 +1011,17 @@
         },
         {
           "version": "1.0.0",
+          "name": "Tour",
+          "type": "component",
+          "cName": "引导",
+          "desc": "用于引导用户了解产品功能的气泡组件。自 4.0 版本开始提供该组件。",
+          "sort": 29,
+          "show": true,
+          "taro": true,
+          "author": "swag~jun"
+        },
+        {
+          "version": "1.0.0",
           "name": "TrendArrow",
           "type": "component",
           "cName": "趋势箭头",
@@ -1039,7 +1050,7 @@
           "cName": "虚拟列表",
           "desc": "长列表渲染",
           "sort": 20,
-          "tarodoc":true,
+          "tarodoc": true,
           "show": true,
           "taro": true,
           "author": "hx"

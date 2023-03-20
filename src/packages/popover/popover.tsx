@@ -110,6 +110,7 @@ export const Popover: FunctionComponent<
     } else {
       style.top = `${elHeight + offNumer}px`
     }
+    console.log('getStyle', style)
     return style
   }
 
