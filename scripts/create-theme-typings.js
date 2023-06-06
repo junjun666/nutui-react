@@ -153,6 +153,7 @@ function generate() {
       ignore: './src/**/demo.scss',
     }),
   ]
+  console.log('files', files)
   Promise.all(
     files.map(function (file) {
       return fse.readFile(path.join(process.cwd(), file)).then((data) => {
@@ -161,20 +162,26 @@ function generate() {
       })
     })
   ).then((data) => {
+    console.log('data', data)
+    // 这里的data里面有很多的数组，有的数组项带值，有的是空数组，这个reduce的目的是想要将所有数组项拼接成一个大数组。
     const result = data.reduce((pre, curr) => {
       return [...pre, ...curr]
     }, [])
+
+    // 这里的result就是一个合并后的大数组
+    // 这里想通过new Set进行对数组项里面的值一个去重的效果
     const unique = Array.from(new Set(result))
 
+    // 借助prettier这个npm包进行类型的格式化
     fse.writeFile(
       path.join(process.cwd(), './src/packages/configprovider/types.ts'),
       prettier.format(`export type NutCSSVariables = ${unique.join('|')}`, {
-        trailingComma: 'es5',
+        trailingComma: 'es5', // 表示只在ES5兼容的环境下保留尾随逗号。
         tabWidth: 2,
         semi: false,
         singleQuote: true,
         printWidth: 80,
-        endOfLine: 'auto',
+        endOfLine: 'auto', // 'auto'表示根据当前环境自动选择换行符类型（例如，Windows使用CRLF，Unix使用LF）。
         parser: 'babel',
       })
     )
