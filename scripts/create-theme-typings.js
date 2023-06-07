@@ -1,3 +1,11 @@
+// 这个js脚本就是提取styles/variables.scss和组件的scss文件中的主题css样式变量，然后转换输出到文件中
+// 格式类似于下面的这种：
+// export type NutCSSVariables =
+// | 'nutuiBrandColor'
+// | 'nutuiBrandColorStart'
+// | 'nutuiBrandColorEnd'
+// | 'nutuiBrandLinkColor'
+
 const glob = require('glob')
 const path = require('path')
 const fse = require('fs-extra')
@@ -155,6 +163,7 @@ function generate() {
   ]
   console.log('files', files)
   Promise.all(
+    // 里面的每一个项都是一个promise
     files.map(function (file) {
       return fse.readFile(path.join(process.cwd(), file)).then((data) => {
         if (!data) return []
@@ -162,8 +171,7 @@ function generate() {
       })
     })
   ).then((data) => {
-    console.log('data', data)
-    // 这里的data里面有很多的数组，有的数组项带值，有的是空数组，这个reduce的目的是想要将所有数组项拼接成一个大数组。
+    // 这里的data里面有很多的数组，有的数组项带值（比如toast匹配到就有值），有的是空数组，这个reduce的目的是想要将所有数组项拼接成一个大数组。
     const result = data.reduce((pre, curr) => {
       return [...pre, ...curr]
     }, [])
@@ -192,7 +200,10 @@ function matchCssVarFromText(text) {
   if (!text) return []
   const matched = text.match(/--nutui[\w\-]*/gi)
   if (!matched) return []
+  // 目前会匹配到两个matched，一个是variables.scss里面的文件，另一个是toast.scss里面的文件
+  // matched: 比如'--nutui-brand-color'，'--nutui-brand-color-start' 会匹配到
   const variables = matched.map((cssVar) => `'${camelCase(cssVar)}'`)
+  // variables: ["'nutuiBrandColor'", "'nutuiBrandColorStart'"]
   return variables
 }
 
