@@ -41,6 +41,7 @@ function extractPropsTable(doc) {
   const MarkdownIt = require('markdown-it')()
   let sources = MarkdownIt.parse(doc, {})
   const tables = {}
+  // 这块的逻辑主要是为了找到并匹配上props的内容，然后读取到下面的表格
   sources.forEach((token, index) => {
     if (
       token.type == 'heading_open' &&
@@ -163,9 +164,11 @@ function getComponentName(key) {
  *    step c: 添加注释
  */
 function codeShift() {
+  // 通过reduce累加的方法遍历src/config.json下的所有组件并加入数组并返回
   const components = readAllComponents()
   components.forEach((component) => {
     const { name } = component
+    // 读取每个组件对应的doc.md文档
     const componentDocumentPath = path.join(
       __dirname,
       '../src/packages',
@@ -177,9 +180,28 @@ function codeShift() {
         readComponentDocument(componentDocumentPath)
       )
       Object.keys(tables).forEach((key) => {
+        // 读取对应组件的dts的path路径
         const dtsPath = getDtsPath(key)
         if (fse.pathExistsSync(dtsPath)) {
           const table = markdownTable2Json(tables[key])
+          // 这里我们以水印组件为例把props里面的属性打印出来
+          // console.log("table", table)
+          // table [
+          //   [ 'width', '水印的宽度', 'number', '120' ],
+          //   [ 'height', '水印的高度', 'number', '64' ],
+          //   [ 'rotate', '水印绘制时，旋转的角度', 'number', '-22' ],
+          //   [ 'image', '图片源，建议导出 2 倍或 3 倍图，优先使用图片渲染水印', 'string', '-' ],
+          //   [ 'imageWidth', '图片宽度', 'number', '120' ],
+          //   [ 'imageHeight', '图片高度', 'number', '64' ],
+          //   [ 'zIndex', '追加的水印元素的 z-index', 'number', '2000' ],
+          //   [ 'content', '水印文字内容', 'string', '-' ],
+          //   [ 'color', '水印文字颜色', 'string', 'rgba(0, 0, 0, .15)' ],
+          //   [ 'fontSize', '文字大小', 'string | number', '16' ],
+          //   [ 'gapX', '水印之间的水平间距', 'number', '24' ],
+          //   [ 'gapY', '水印之间的垂直间距', 'number', '48' ],
+          //   [ 'fullPage', '是否覆盖整个页面', 'boolean', 'true' ],
+          //   [ 'fontFamily', '水印文字字体', 'string', '-' ]
+          // ]
           addComments(dtsPath, table, getComponentName(key))
         } else {
           console.warn(name + ' dts file does not exist')
