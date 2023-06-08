@@ -45,7 +45,6 @@ export default defineConfig({
     lib: {
       entry: './dist/styles/themes/default.scss',
       formats: ['es'],
-      name: 'style',
       fileName: 'style',
     },
   },

@@ -1,3 +1,6 @@
+// 1) 生成dist目录下packages的文件夹，里面是每个组件的scss样式
+// 2) 把src下的styles目录拷贝到dist的styles目录下
+// 3) 生成一个文件夹：dist/styles/themes/default.scss，里面引入了各个组件的样式
 const config = require('../src/config.json')
 const path = require('path')
 const fs = require('fs-extra')
