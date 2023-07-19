@@ -234,7 +234,7 @@ export default App;
 | error | Whether to display image loading failure | `boolean \| ReactNode` | `true` |
 | loading | Whether to show loading images | `boolean \| ReactNode` | `true` |
 | lazy | Whether to lazy load images | `boolean` | `false` |
-| onClick | Triggered when an image is clicked | `(e: MouseEvent) => void` | `-` |
+| onClick | Triggered when an image is clicked | `(e: MouseEvent<HTMLDivElement>) => void` | `-` |
 | onLoad | Triggered after the image is loaded | `() => void` | `-` |
 | onError | Triggered when the image fails to load | `() => void` | `-` |
 

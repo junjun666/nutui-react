@@ -233,7 +233,7 @@ export default App;
 | error | 是否展示图片加载失败 | `boolean \| ReactNode` | `true` |
 | loading | 是否展示加载中图片 | `boolean \| ReactNode` | `true` |
 | lazy | 是否为懒加载图片 | `boolean` | `false` |
-| onClick | 点击图片时触发 | `(e: MouseEvent) => void` | `-` |
+| onClick | 点击图片时触发 | `(e: MouseEvent<HTMLDivElement>) => void` | `-` |
 | onLoad | 图片加载完后触发 | `() => void` | `-` |
 | onError | 图片加载失败后触发 | `() => void` | `-` |
 

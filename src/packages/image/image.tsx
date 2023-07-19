@@ -3,9 +3,9 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useCallback,
   ReactNode,
 } from 'react'
+import type { MouseEvent } from 'react'
 import { Image as ImageIcon, ImageError } from '@nutui/icons-react'
 import classNames from 'classnames'
 import { BasicComponent, ComponentDefaults } from '@/utils/typings'
@@ -22,7 +22,7 @@ export interface ImageProps extends BasicComponent {
   error: boolean | ReactNode
   loading: boolean | ReactNode
   lazy: boolean
-  onClick: (e: MouseEvent) => void
+  onClick: (e: MouseEvent<HTMLDivElement>) => void
   onLoad: () => void
   onError: () => void
 }
@@ -161,11 +161,41 @@ export const Image: FunctionComponent<
     }
   }, [lazy])
 
-  const imageClick = (event: any) => {
+  const imageClick = (event: MouseEvent<HTMLDivElement>) => {
     onClick && onClick(event)
   }
 
-  const renderErrorImg = useCallback(() => {
+  const renderLazyImage = () => {
+    if (typeof window === 'undefined' || !lazy) {
+      return (
+        <img
+          ref={imgRef}
+          className="nut-img"
+          style={imgStyle}
+          src={src}
+          alt={alt}
+          onLoad={handleLoad}
+          onError={handleError}
+        />
+      )
+    }
+    return (
+      <img
+        ref={imgRef}
+        className="nut-img lazyload"
+        style={imgStyle}
+        data-src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={handleLoad}
+        onError={handleError}
+      />
+    )
+  }
+
+  const [sr, setSR] = useState(false)
+
+  const renderErrorImg = () => {
     if (!isError) return null
     if (typeof error === 'boolean' && error === true && !innerLoading) {
       return (
@@ -178,10 +208,14 @@ export const Image: FunctionComponent<
       return <div className="nut-img-error">{error}</div>
     }
     return null
-  }, [error, isError])
+  }
 
-  const renderLoading = useCallback(() => {
-    if (!loading) return null
+  const renderLoading = () => {
+    if (!loading) {
+      setSR(true)
+      return null
+    }
+    console.log('ssr', sr)
     if (typeof loading === 'boolean' && loading === true && innerLoading) {
       return (
         <div className="nut-img-loading">
@@ -193,38 +227,17 @@ export const Image: FunctionComponent<
       return <div className="nut-img-loading">{loading}</div>
     }
     return null
-  }, [loading, innerLoading])
+  }
 
   return (
     <div
       className={classNames(classPrefix, className)}
       style={containerStyle}
-      onClick={(e: any) => {
+      onClick={(e) => {
         imageClick(e)
       }}
     >
-      {lazy ? (
-        <img
-          ref={imgRef}
-          className="nut-img lazyload"
-          style={imgStyle}
-          data-src={src}
-          alt={alt}
-          loading="lazy"
-          onLoad={handleLoad}
-          onError={handleError}
-        />
-      ) : (
-        <img
-          ref={imgRef}
-          className="nut-img"
-          style={imgStyle}
-          src={src}
-          alt={alt}
-          onLoad={handleLoad}
-          onError={handleError}
-        />
-      )}
+      {renderLazyImage()}
       {renderLoading()}
       {renderErrorImg()}
     </div>
