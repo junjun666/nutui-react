@@ -4,11 +4,13 @@ import React, {
   FunctionComponent,
   MouseEvent,
   MouseEventHandler,
+  useRef,
 } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { EnterHandler, ExitHandler } from 'react-transition-group/Transition'
 import classNames from 'classnames'
 import { BasicComponent, ComponentDefaults } from '@/utils/typings'
+import { useLockScroll } from '@/utils/use-lock-scroll'
 
 export interface OverlayProps extends BasicComponent {
   zIndex: number
@@ -20,6 +22,7 @@ export interface OverlayProps extends BasicComponent {
   afterShow: () => void
   afterClose: () => void
 }
+
 export const defaultOverlayProps = {
   ...ComponentDefaults,
   zIndex: 1000,
@@ -54,33 +57,22 @@ export const Overlay: FunctionComponent<
 
   const classPrefix = `nut-overlay`
 
+  const nodeRef = useRef(null)
+
   useEffect(() => {
     if (visible) {
       setInnerVisible(true)
     } else {
       setInnerVisible(false)
     }
-    lock()
   }, [visible])
 
-  useEffect(() => {
-    return () => {
-      document.body.classList.remove('nut-overflow-hidden')
-    }
-  }, [])
+  useLockScroll(nodeRef, !!props.lockScroll && innerVisible)
 
   const classes = classNames(className, classPrefix)
 
   const styles = {
     ...style,
-  }
-
-  const lock = () => {
-    if (lockScroll && visible) {
-      document.body.classList.add('nut-overflow-hidden')
-    } else {
-      document.body.classList.remove('nut-overflow-hidden')
-    }
   }
 
   const handleClick: MouseEventHandler<HTMLDivElement> = (e: MouseEvent) => {
@@ -104,6 +96,7 @@ export const Overlay: FunctionComponent<
   return (
     <>
       <CSSTransition
+        nodeRef={nodeRef}
         classNames={`${classPrefix}-slide`}
         unmountOnExit
         timeout={duration}
@@ -111,7 +104,13 @@ export const Overlay: FunctionComponent<
         onEntered={onHandleOpened}
         onExited={onHandleClosed}
       >
-        <div className={classes} style={styles} {...rest} onClick={handleClick}>
+        <div
+          ref={nodeRef}
+          className={classes}
+          style={styles}
+          {...rest}
+          onClick={handleClick}
+        >
           {children}
         </div>
       </CSSTransition>

@@ -21,7 +21,7 @@ import  React, { useState  } from "react";
 import { Picker,Cell } from '@nutui/nutui-react';
 
 const App = () => {
-  const [isVisible1, setIsVisible1] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [baseDesc, setBaseDesc] = useState('')
   const listData1 = [
     [
@@ -48,12 +48,12 @@ const App = () => {
   }
   return ( 
     <>   
-      <Cell title="Choose City" description={baseDesc} onClick={() => setIsVisible1(!isVisible1)}/>
+      <Cell title="Choose City" description={baseDesc} onClick={() => setVisible(!visible)}/>
       <Picker
-        visible={isVisible1}
+        visible={visible}
         options={listData1}
         onConfirm={(list, values) => confirmPicker(list, values)}
-        onClose={() => setIsVisible1(false)}
+        onClose={() => setVisible(false)}
         onChange={changePicker}
        />
     </>
@@ -73,7 +73,7 @@ import  React, { useState  } from "react";
 import { Picker,Cell } from '@nutui/nutui-react';
 
 const App = () => {
-  const [isVisible1, setIsVisible1] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [baseDefault, setbaseDefault] = useState('')
   const [defaultValue, setDefaultValue] = useState([2])
   const listData1 = [
@@ -98,13 +98,13 @@ const App = () => {
   }
   return ( 
     <>   
-      <Cell title="Choose City" description={baseDefault} onClick={() => setIsVisible1(!isVisible1)}/>
+      <Cell title="Choose City" description={baseDefault} onClick={() => setVisible(!visible)}/>
       <Picker
-        visible={isVisible1}
+        visible={visible}
         options={listData1}
         defaultValue={defaultValue}
         onConfirm={(list, values) => confirmPicker(list, values)}
-        onClose={() => setIsVisible1(false)}
+        onClose={() => setVisible(false)}
        />
     </>
   );
@@ -385,6 +385,7 @@ export default App;
 | defaultValue | Default Index | `Array` | `[]` |
 | threeDimensional | Turn on 3D effects | `boolean` | `true` |
 | duration | move animation duration, ms | `string`  \|  `number` | `1000` |
+| popupProps | popup props | `object` | `-` |
 | onConfirm | Emitted when click confirm button. | `(options, value) => void` | `-` |
 | onChange | Emitted when current option changed. | `(options, value) => void` | `-` |
 | onClose | Emitted when click close button. | `(options, value) => void` | `-` |

@@ -18,7 +18,7 @@
         "name": "theme-react",
         "cName": "主题定制",
         "eName": "Customize Theme",
-        "show": false
+        "show": true
       },
       {
         "name": "migrate-from-v1",
@@ -401,6 +401,17 @@
           "show": false,
           "exportEmpty": true,
           "author": "szg2008"
+        },
+        {
+          "version": "2.0.0",
+          "name": "CalendarCard",
+          "type": "component",
+          "cName": "日历卡片",
+          "desc": "日历卡片，支持多种选择类型",
+          "sort": 10,
+          "show": true,
+          "taro": true,
+          "author": "eiinu"
         },
         {
           "version": "2.0.0",

@@ -53,7 +53,7 @@ const App = () => {
     <>
       <Tabs value={tab1value} onChange={(value) => {
         setTab1value(value)
-      }} type="smile">
+      }} activeType="smile">
         <Tabs.TabPane  title="Tab 1"> Tab 1 </Tabs.TabPane>
         <Tabs.TabPane  title="Tab 2"> Tab 2 </Tabs.TabPane>
         <Tabs.TabPane  title="Tab 3"> Tab 3 </Tabs.TabPane>
@@ -305,14 +305,16 @@ import { Tabs } from '@nutui/nutui-react';
 
 const App = () => {
   const [tab4value, setTab4value] = useState('0');
-  const list4 = Array.from(new Array(10).keys());
   return (
     <>
       <Tabs value={tab4value} onChange={(value) => {
         setTab4value(value)
       }}>
-        {list4.map(item => <Tabs.TabPane key={item}
-          title={`Tab ${item}`}> Tab {item} </Tabs.TabPane>)}
+        <Tabs.TabPane title="Low-level sale">Low-level sale</Tabs.TabPane>
+        <Tabs.TabPane title="Shangxinri">Shangxinri</Tabs.TabPane>
+        <Tabs.TabPane title="Ten billion subsidies">Ten billion subsidies</Tabs.TabPane>
+        <Tabs.TabPane title="Today's great value">Today&lsquo;s great value</Tabs.TabPane>
+        <Tabs.TabPane title="So good and so cheap">So good and so cheap</Tabs.TabPane>
       </Tabs>
     </>
   );
@@ -366,7 +368,7 @@ const App = () => {
       <Tabs style={{ height: '300px' }} value={tab6value}
             onChange={(value) => {
               setTab6value(value)
-            }} type="smile" direction="vertical">
+            }} activeType="smile" direction="vertical">
         {list5.map(item => <Tabs.TabPane key={item}
           title={`Tab ${item}`}> Tab {item} </Tabs.TabPane>)}
       </Tabs>
@@ -396,7 +398,6 @@ const App = () => {
         onChange={(value) => {
           setTab8value(value)
         }}
-        type="smile"
         direction="vertical"
       >
         <Tabs.TabPane title="Tab 1">
@@ -405,7 +406,6 @@ const App = () => {
             onChange={(value) => {
               setTab9value(value)
             }}
-            type="smile"
             direction="horizontal"
           >
             <Tabs.TabPane title="Tab 1"> Tab 1 </Tabs.TabPane>
@@ -423,7 +423,6 @@ const App = () => {
           setTab8value(paneKey)
         }}
         autoHeight
-        type="smile"
       >
         <Tabs.TabPane title="Tab 1">
           <Tabs

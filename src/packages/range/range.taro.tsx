@@ -9,9 +9,9 @@ import React, {
 import classNames from 'classnames'
 import { View } from '@tarojs/components'
 import { useTouch } from '@/utils/use-touch'
-import { getRectByTaro } from '@/utils/use-client-rect'
 import { BasicComponent, ComponentDefaults } from '@/utils/typings'
 import { usePropsValue } from '@/utils/use-props-value'
+import { getRectByTaro } from '@/utils/get-rect-by-taro'
 
 export type RangeValue = number | number[]
 
@@ -274,12 +274,12 @@ export const Range: FunctionComponent<
     setDragStatus('draging')
 
     const rect = await getRectByTaro(root.current)
-    let delta = touch.deltaX
+    let delta = touch.deltaX.current
     let total = rect.width
     let diff = (delta / total) * scope()
 
     if (vertical) {
-      delta = touch.deltaY
+      delta = touch.deltaY.current
       total = rect.height
       diff = (delta / total) * scope()
     }

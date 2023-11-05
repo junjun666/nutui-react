@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { Close, Notice } from '@nutui/icons-react'
 import classNames from 'classnames'
-import { getRect } from '../../utils/use-client-rect'
+import { getRect } from '@/utils/use-client-rect'
 import { BasicComponent, ComponentDefaults } from '@/utils/typings'
 
 export interface NoticeBarProps extends BasicComponent {
@@ -41,7 +41,7 @@ const defaultProps = {
   content: '',
   closeable: false,
   wrap: false,
-  leftIcon: null,
+  leftIcon: <Notice width={16} height={16} />,
   rightIcon: null,
   delay: 1,
   scrollable: null,
@@ -308,10 +308,13 @@ export const NoticeBar: FunctionComponent<
   const autoplay = () => {
     if (childCount <= 1) return
     stopAutoPlay()
-    swiperRef.current.autoplayTimer = setTimeout(() => {
-      next()
-      autoplay()
-    }, Number(duration) + 100 * speed)
+    swiperRef.current.autoplayTimer = setTimeout(
+      () => {
+        next()
+        autoplay()
+      },
+      Number(duration) + 100 * speed
+    )
   }
 
   // 切换方法
@@ -357,6 +360,9 @@ export const NoticeBar: FunctionComponent<
 
   const getStyle = (moveOffset = offset) => {
     const target = innerRef.current
+    if (!target) {
+      return
+    }
     let _offset = 0
     // 容器高度-元素高度
     const val = rect.height - height
@@ -430,9 +436,7 @@ export const NoticeBar: FunctionComponent<
     <div className={`${classPrefix} ${className || ''}`} style={style}>
       {showNoticeBar && direction === 'horizontal' ? (
         <div className={noticebarClass} style={barStyle} onClick={handleClick}>
-          <div className="left-icon">
-            {leftIcon || <Notice width={16} height={16} />}
-          </div>
+          {leftIcon ? <div className="left-icon">{leftIcon}</div> : null}
           <div ref={wrapRef} className="wrap">
             <div
               ref={contentRef}

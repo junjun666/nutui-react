@@ -15,6 +15,7 @@ import {
   useParams,
 } from '@/utils/use-custom-event'
 import { BasicComponent } from '@/utils/typings'
+import { useLockScrollTaro } from '@/utils/use-lock-scoll-taro'
 
 export type DialogProps = BasicDialogProps & BasicComponent
 const defaultProps = {
@@ -32,7 +33,7 @@ const defaultProps = {
   lockScroll: true,
   beforeCancel: () => true,
   beforeClose: () => true,
-  onOverlayClick: () => undefined,
+  onOverlayClick: () => true,
 } as DialogProps
 
 export const BaseDialog: FunctionComponent<Partial<DialogProps>> & {
@@ -45,9 +46,13 @@ export const BaseDialog: FunctionComponent<Partial<DialogProps>> & {
   const {
     params: {
       id,
+      className,
+      style,
       visible,
       footer,
       title,
+      content,
+      children,
       footerDirection,
       hideConfirmButton,
       hideCancelButton,
@@ -77,7 +82,7 @@ export const BaseDialog: FunctionComponent<Partial<DialogProps>> & {
       }
     }
   )
-
+  const refObject = useLockScrollTaro(!!(visible && lockScroll))
   const renderFooter = () => {
     if (footer === null) return ''
 
@@ -126,18 +131,17 @@ export const BaseDialog: FunctionComponent<Partial<DialogProps>> & {
     )
   }
   const onHandleClickOverlay = (e: any) => {
-    console.log('onClose?.()', closeOnOverlayClick)
     if (closeOnOverlayClick && visible && e.target === e.currentTarget) {
       const closed = onOverlayClick && onOverlayClick()
       closed && onClose?.()
       closed && onCancel?.()
     }
   }
-  console.log('props', props, visible)
 
   return (
     <View
       style={{ display: visible ? 'block' : 'none' }}
+      ref={refObject}
       catchMove={lockScroll}
     >
       <>
@@ -147,6 +151,7 @@ export const BaseDialog: FunctionComponent<Partial<DialogProps>> & {
             closeOnOverlayClick={closeOnOverlayClick}
             lockScroll={lockScroll}
             onClick={onHandleClickOverlay}
+            className={classNames('nut-dialog-overlay')}
           />
         ) : null}
 
@@ -158,11 +163,15 @@ export const BaseDialog: FunctionComponent<Partial<DialogProps>> & {
           appear
         >
           <Content
+            className={className}
+            style={style}
             title={title}
             footer={renderFooter()}
             footerDirection={footerDirection}
             visible={visible}
-          />
+          >
+            {content || children}
+          </Content>
         </CSSTransition>
       </>
     </View>

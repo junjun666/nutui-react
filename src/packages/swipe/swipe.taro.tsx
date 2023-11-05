@@ -5,19 +5,18 @@ import React, {
   useImperativeHandle,
   useEffect,
 } from 'react'
-import type { TouchEvent, MouseEvent } from 'react'
+import type { MouseEvent } from 'react'
 import classNames from 'classnames'
+import { View } from '@tarojs/components'
 import { nextTick, useReady } from '@tarojs/taro'
+import { BaseEventOrig } from '@tarojs/components/types/common'
 import { useTouch } from '@/utils/use-touch'
-import { getRectByTaro } from '@/utils/use-client-rect'
+import { getRectByTaro } from '@/utils/get-rect-by-taro'
 import { BasicComponent, ComponentDefaults } from '@/utils/typings'
 
 export type SwipeSide = 'left' | 'right'
 
-function preventDefault(
-  event: TouchEvent | Event,
-  isStopPropagation?: boolean
-): void {
+function preventDefault(event: any, isStopPropagation?: boolean): void {
   if (typeof event.cancelable !== 'boolean' || event.cancelable) {
     event.preventDefault()
   }
@@ -25,10 +24,12 @@ function preventDefault(
     event.stopPropagation()
   }
 }
+
 export interface SwipeInstance {
   open: (side: SwipeSide) => void
   close: () => void
 }
+
 export interface SwipeProps extends BasicComponent {
   /** 标识符，可以在事件参数中获取到 */
   name?: string | number
@@ -61,10 +62,11 @@ export interface SwipeProps extends BasicComponent {
     event: MouseEvent<HTMLDivElement>,
     position: SwipeSide
   ) => void
-  onTouchStart?: (event: TouchEvent<HTMLDivElement>) => void
-  onTouchEnd?: (event: TouchEvent<HTMLDivElement>) => void
-  onTouchMove?: (event: TouchEvent<HTMLDivElement>) => void
+  onTouchStart?: (event: BaseEventOrig<HTMLDivElement>) => void
+  onTouchEnd?: (event: BaseEventOrig<HTMLDivElement>) => void
+  onTouchMove?: (event: BaseEventOrig<HTMLDivElement>) => void
 }
+
 const defaultProps = {
   ...ComponentDefaults,
   name: '',
@@ -118,7 +120,7 @@ export const Swipe = forwardRef<
 
   const rightWidth = actionWidth.right
 
-  const onTouchStart = async (event: TouchEvent<HTMLDivElement>) => {
+  const onTouchStart = async (event: BaseEventOrig<HTMLDivElement>) => {
     if (leftWrapper.current) {
       const leftRect = await getRectByTaro(leftWrapper.current)
       setActionWidth((v) => ({ ...v, left: leftRect.width }))
@@ -130,27 +132,28 @@ export const Swipe = forwardRef<
     if (!props.disabled) {
       startOffset.current = state.offset
       touch.start(event)
-      props.onTouchStart && props.onTouchStart(event)
+      props.onTouchStart?.(event)
     }
   }
 
-  const onTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+  const onTouchMove = (event: BaseEventOrig<HTMLDivElement>) => {
     if (props.disabled) {
       return
     }
 
     touch.move(event)
-    props.onTouchMove && props.onTouchMove(event)
+    props.onTouchMove?.(event)
 
     if (touch.isHorizontal()) {
       lockClick.current = true
+      props.onTouchMove && props.onTouchMove(event)
       const newState = { ...state, dragging: true }
-      const isEdge = !opened || touch.deltaX * startOffset.current < 0
+      const isEdge = !opened || touch.deltaX.current * startOffset.current < 0
       if (isEdge) {
         preventDefault(event, true)
       }
       newState.offset = rangeCalculation(
-        touch.deltaX + startOffset.current,
+        touch.deltaX.current + startOffset.current,
         -rightWidth || 0,
         leftWidth || 0
       )
@@ -159,14 +162,14 @@ export const Swipe = forwardRef<
     }
   }
 
-  const onTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+  const onTouchEnd = (event: BaseEventOrig<HTMLDivElement>) => {
     if (state.dragging) {
       setState((v) => ({ ...v, dragging: false }))
       toggle(state.offset > 0 ? 'left' : 'right')
       setTimeout(() => {
         lockClick.current = false
       }, 0)
-      props.onTouchEnd && props.onTouchEnd(event)
+      props.onTouchEnd?.(event)
     }
   }
 
@@ -215,7 +218,6 @@ export const Swipe = forwardRef<
     if (props[`${side}Action`]) {
       return (
         <div
-          id="left"
           ref={side === 'left' ? leftWrapper : rightWrapper}
           className={`${classPrefix}__${side}`}
           onClick={(e) => handleOperate(e, side)}
@@ -234,7 +236,7 @@ export const Swipe = forwardRef<
     if (props.beforeClose) {
       props.beforeClose(position)
     } else {
-      props.onActionClick && props.onActionClick(event, position)
+      props.onActionClick?.(event, position)
     }
   }
 
@@ -265,7 +267,7 @@ export const Swipe = forwardRef<
   }, [])
 
   return (
-    <div
+    <View
       ref={root}
       className={classNames(classPrefix, className)}
       onTouchStart={(e) => onTouchStart(e)}
@@ -278,7 +280,7 @@ export const Swipe = forwardRef<
         {children}
         {renderActionContent('right')}
       </div>
-    </div>
+    </View>
   )
 })
 

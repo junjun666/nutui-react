@@ -1,7 +1,8 @@
 import { useRef } from 'react'
 import Schema from 'async-validator'
-import { Store, Callbacks, FormInstance, FieldEntity } from './types'
+import { Store, Callbacks, FormInstance, FieldEntity, NamePath } from './types'
 
+export const SECRET = 'NUT_FORM_INTERNAL'
 /**
  * 用于存储表单的数据
  */
@@ -18,7 +19,7 @@ class FormStore {
   // 校验成功或失败的回调，onFinish、onFinishFailed
   private callbacks: Callbacks = {}
 
-  private errors: any[] = []
+  private errors: { [key: NamePath]: any } = {}
 
   constructor() {
     this.callbacks = {
@@ -45,8 +46,22 @@ class FormStore {
    * 获取 formItem 的值
    * @param name
    */
-  getFieldValue = (name: string) => {
+  getFieldValue = (name: NamePath) => {
     return this.store?.[name]
+  }
+
+  /**
+   * 获取全部字段
+   */
+  getFieldsValue = (nameList: NamePath[] | true): { [key: NamePath]: any } => {
+    if (typeof nameList === 'boolean') {
+      return JSON.parse(JSON.stringify(this.store))
+    }
+    const fieldsValue: { [key: NamePath]: any } = {}
+    nameList.forEach((field) => {
+      fieldsValue[field] = this.getFieldValue(field)
+    })
+    return fieldsValue
   }
 
   /**
@@ -54,6 +69,7 @@ class FormStore {
    * @param values
    * @param init
    */
+
   setInitialValues = (values: Store, init: boolean) => {
     if (init) {
       this.initialValues = values
@@ -70,11 +86,11 @@ class FormStore {
       ...this.store,
       ...newStore,
     }
-    this.fieldEntities.forEach((enetity: FieldEntity) => {
-      const { name } = enetity.props
+    this.fieldEntities.forEach((entity: FieldEntity) => {
+      const { name } = entity.props
       Object.keys(newStore).forEach((key) => {
         if (key === name) {
-          enetity.onStoreChange('update')
+          entity.onStoreChange('update')
         }
       })
     })
@@ -87,10 +103,18 @@ class FormStore {
     }
   }
 
-  validate = () => {
-    const err: any = []
+  validateFields = async (nameList?: NamePath[]) => {
+    let filterEntitys = []
+    const errs = []
     this.errors.length = 0
-    this.fieldEntities.forEach((entity: FieldEntity) => {
+    if (!nameList || nameList.length === 0) {
+      filterEntitys = this.fieldEntities
+    } else {
+      filterEntitys = this.fieldEntities.filter(({ props: { name } }) =>
+        nameList.includes(name)
+      )
+    }
+    for (const entity of filterEntitys) {
       const { name, rules = [] } = entity.props
       const descriptor: any = {}
       if (rules.length) {
@@ -105,21 +129,27 @@ class FormStore {
         }
       }
       const validator = new Schema(descriptor)
-      validator.messages()
-      validator.validate({ [name]: this.store?.[name] }, (errors) => {
+      // 此处合并无值message 没有意义？
+      // validator.messages()
+      try {
+        await validator.validate({ [name]: this.store?.[name] })
+      } catch ({ errors }) {
         if (errors) {
-          err.push(...errors)
-          this.errors.push(...errors)
-          // 表单项更新
+          errs.push(...(errors as any[]))
+          this.errors[name] = errors
         }
-        entity.onStoreChange('validate')
-      })
-    })
-    return err
+      } finally {
+        if (!errs || errs.length === 0) {
+          this.errors[name] = []
+        }
+      }
+      entity.onStoreChange('validate')
+    }
+    return errs
   }
 
-  submit = () => {
-    const errors = this.validate()
+  submit = async () => {
+    const errors = await this.validateFields()
     if (errors.length === 0) {
       this.callbacks.onFinish?.(this.store)
     } else if (errors.length > 0) {
@@ -135,30 +165,44 @@ class FormStore {
     })
   }
 
+  dispatch = ({ name }: { name: string }) => {
+    this.validateFields([name])
+  }
+
+  getInternal = (key: string) => {
+    if (key === SECRET) {
+      return {
+        registerField: this.registerField,
+        setCallback: this.setCallback,
+        setInitialValues: this.setInitialValues,
+        dispatch: this.dispatch,
+        store: this.store,
+        fieldEntities: this.fieldEntities,
+      }
+    }
+  }
+
   getForm = () => {
     return {
-      setInitialValues: this.setInitialValues,
-      setCallback: this.setCallback,
-      registerField: this.registerField,
       getFieldValue: this.getFieldValue,
+      getFieldsValue: this.getFieldsValue,
       setFieldsValue: this.setFieldsValue,
       resetFields: this.resetFields,
       submit: this.submit,
-      store: this.store,
       errors: this.errors,
-      fieldEntities: this.fieldEntities,
+      getInternal: this.getInternal,
     }
   }
 }
 
-export const useForm = (form?: FormInstance) => {
-  const formRef = useRef<any>()
+export const useForm = (form?: FormInstance): [FormInstance] => {
+  const formRef = useRef<FormInstance>()
   if (!formRef.current) {
     if (form) {
       formRef.current = form
     } else {
       const formStore = new FormStore()
-      formRef.current = formStore.getForm()
+      formRef.current = formStore.getForm() as FormInstance
     }
   }
   return [formRef.current]

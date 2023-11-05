@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { Close, Notice } from '@nutui/icons-react-taro'
 import classNames from 'classnames'
-import { getRectByTaro } from '../../utils/use-client-rect'
+import { getRectByTaro } from '@/utils/get-rect-by-taro'
 import { BasicComponent, ComponentDefaults } from '@/utils/typings'
 
 export interface NoticeBarProps extends BasicComponent {
@@ -41,7 +41,7 @@ const defaultProps = {
   content: '',
   closeable: false,
   wrap: false,
-  leftIcon: null,
+  leftIcon: <Notice size={16} />,
   rightIcon: null,
   delay: 1,
   scrollable: null,
@@ -119,7 +119,9 @@ export const NoticeBar: FunctionComponent<
       childCount,
     }
   }, [children])
+  // 滚动消息的总高度
   let trackSize = childCount * Number(height)
+  // 设置最小偏移量（最后一条的偏移位置）
   const minOffset = (() => {
     if (rect) {
       const base = isVertical ? rect.height : rect.width
@@ -134,9 +136,7 @@ export const NoticeBar: FunctionComponent<
         scrollList.current = [].concat(childs)
       } else {
         scrollList.current = [].concat(list)
-        setTimeout(() => {
-          startRollEasy()
-        }, Number(duration))
+        startRollEasy()
       }
     } else {
       initScrollWrap(content)
@@ -297,11 +297,9 @@ export const NoticeBar: FunctionComponent<
 
   useEffect(() => {
     if (isVertical && children) {
-      setTimeout(() => {
-        init()
-        stopAutoPlay()
-        autoplay()
-      }, 300)
+      init()
+      stopAutoPlay()
+      autoplay()
     }
   }, [children, container?.current])
 
@@ -314,10 +312,13 @@ export const NoticeBar: FunctionComponent<
   const autoplay = () => {
     if (childCount <= 1) return
     stopAutoPlay()
-    swiperRef.current.autoplayTimer = setTimeout(() => {
-      next()
-      autoplay()
-    }, Number(duration) + 100 * speed)
+    swiperRef.current.autoplayTimer = setTimeout(
+      () => {
+        next()
+        autoplay()
+      },
+      Number(duration) + 100 * speed
+    )
   }
 
   // 切换方法
@@ -363,9 +364,12 @@ export const NoticeBar: FunctionComponent<
 
   const getStyle = (moveOffset = offset) => {
     const target = innerRef.current
+    if (!target) {
+      return
+    }
     let _offset = 0
     // 容器高度-元素高度
-    const val = rect?.height - height
+    const val = (rect?.height || 0) - height
     _offset = moveOffset + Number(active === childCount - 1 && val / 2)
 
     target.style.transitionDuration = `${
@@ -436,7 +440,7 @@ export const NoticeBar: FunctionComponent<
     <div className={`${classPrefix} ${className || ''}`} style={style}>
       {showNoticeBar && direction === 'horizontal' ? (
         <div className={noticebarClass} style={barStyle} onClick={handleClick}>
-          <div className="left-icon">{leftIcon || <Notice size={16} />}</div>
+          {leftIcon ? <div className="left-icon">{leftIcon}</div> : null}
           <div ref={wrapRef} className="wrap">
             <div
               ref={contentRef}

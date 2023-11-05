@@ -21,7 +21,7 @@ import  React, { useState  } from "react";
 import { Picker,Cell } from '@nutui/nutui-react-taro';
 
 const App = () => {
-  const [isVisible1, setIsVisible1] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [baseDesc, setBaseDesc] = useState('')
   const listData1 = [
     [
@@ -48,12 +48,12 @@ const App = () => {
   }
   return ( 
     <>   
-      <Cell title="请选择城市" description={baseDesc} onClick={() => setIsVisible1(!isVisible1)}/>
+      <Cell title="请选择城市" description={baseDesc} onClick={() => setVisible(!visible)}/>
       <Picker
-        visible={isVisible1}
+        visible={visible}
         options={listData1}
         onConfirm={(list, values) => confirmPicker(list, values)}
-        onClose={() => setIsVisible1(false)}
+        onClose={() => setVisible(false)}
         onChange={changePicker}
        />
     </>
@@ -73,7 +73,7 @@ import  React, { useState  } from "react";
 import { Picker, Cell } from '@nutui/nutui-react-taro';
 
 const App = () => {
-  const [isVisible1, setIsVisible1] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [baseDefault, setbaseDefault] = useState('')
   const [defaultValue, setDefaultValue] = useState([2])
   const listData1 = [
@@ -98,13 +98,13 @@ const App = () => {
   }
   return ( 
     <>   
-      <Cell title="请选择城市" description={baseDefault} onClick={() => setIsVisible1(!isVisible1)}/>
+      <Cell title="请选择城市" description={baseDefault} onClick={() => setVisible(!visible)}/>
       <Picker
-        visible={isVisible1}
+        visible={visible}
         options={listData1}
         defaultValue={defaultValue}
         onConfirm={(list, values) => confirmPicker(list, values)}
-        onClose={() => setIsVisible1(false)}
+        onClose={() => setVisible(false)}
        />
     </>
   );
@@ -388,6 +388,7 @@ export default App;
 | defaultValue | 默认选中 | `Array` | `[]` |
 | threeDimensional | 是否开启3D效果 | `boolean` | `true` |
 | duration | 快速滑动时惯性滚动的时长，单位 ms | `string`  \|  `number` | `1000` |
+| popupProps | 透传popup属性 | `object` | `-` |
 | onConfirm | 点击确认按钮时候回调 | `(options, value) => void` | `-` |
 | onChange | 每一列值变更时调用 | `(options, value) => void` | `-` |
 | onClose | 关闭时触发 | `(options, value) => void` | `-` |
